@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #e63946;
+            margin-bottom: 30px;
+        }
+
+        #start-btn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #ffb3c6;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        #start-btn:hover {
+            background-color: #ff8fab;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        /* 弹窗样式 */
+        .popup {
+            position: absolute;
+            border-radius: 8px;
+            font-size: 12px; /* 减小字体大小 */
+            color: white;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 80px;
+            max-width: 120px;
+            padding: 10px;
+            line-height: 1.4; /* 设置行高 */
+            word-wrap: break-word; /* 允许长单词换行 */
+            overflow: hidden; /* 隐藏溢出内容 */
+        }
+
+        @keyframes fadeIn {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.8); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>小周老师，请查看惊喜</h1>
+    <button id="start-btn" onclick="showLove()">点击查收祝福</button>
+</div>
+
+
+<audio id="bg-music" loop>
+    <source src="缘为冰 - 一点点 (DJ版)_L.ogg" type="audio/ogg">
+    <source src="缘为冰 - 一点点 (DJ版)_L.MP3" type="audio/mpeg">
+    您的浏览器不支持音频元素。
+</audio>
+
+<script>
+    const music = document.getElementById('bg-music');
+
+    function showLove() {
+        document.querySelector(".container").style.display = "none";
+        showHeartPopups();
+        // 开始自动播放音乐
+        music.play().catch(e => {
+            console.log("音乐播放失败:", e);
+            // 可选：添加友好提示
+            console.log("提示：某些浏览器需要用户交互后才能播放音频");
+        });
+    }
+
+    function showHeartPopups() {
+        const messages = [
+            "生日快乐", "别熬夜", "保持微笑呀", "热爱生活", "好好爱自己", 
+            "记得吃水果", "天冷了，多穿衣服", "每天都要元气满满", "期待下一次见面", 
+            "保持好心情", "梦想成真", "愿所有烦恼都消失", "想你每一天", "照顾好自己"
+        ];
+
+        const heartPoints = generateHeartPoints(35, window.innerWidth, window.innerHeight);
+
+        heartPoints.forEach((point, index) => {
+            setTimeout(() => {
+                createPopup(point.x, point.y, messages[index % messages.length]);
+            }, index * 800); // 每个弹窗间隔800ms显示
+        });
+
+        // 等待所有弹窗显示完毕后再处理
+        setTimeout(() => {
+            // 这里可以添加其他逻辑，比如音乐控制
+        }, 60000); // 等待60秒
+    }
+
+    function createPopup(x, y, message) {
+        const popup = document.createElement("div");
+        popup.classList.add("popup");
+        
+        // 使用transform实现精确居中
+        popup.style.left = `${x}px`;
+        popup.style.top = `${y}px`;
+        popup.style.transform = "translate(-50%, -50%)";
+        
+        popup.innerText = message;
+        popup.style.backgroundColor = getRandomColor();
+        popup.style.fontSize = "11px";// 减小字体大小
+        popup.style.padding = "10px";
+        popup.style.minWidth = "80px";
+        popup.style.maxWidth = "120px";
+
+        document.body.appendChild(popup);
+    }
+
+    function generateHeartPoints(numPoints, screenWidth, screenHeight) {
+        const points = [];
+        const centerX = screenWidth / 2;
+        const centerY = screenHeight / 2;
+
+        const scale = Math.min(screenWidth, screenHeight) / 40;
+
+        for (let i = 0; i < numPoints; i++) {
+            const t = (i / numPoints) * (2 * Math.PI);
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+
+            const posX = centerX + x * scale;
+            const posY = centerY - y * scale;
+
+            points.push({
+                x: posX,
+                y: posY
+            });
+        }
+        return points;
+    }
+
+    function getRandomColor() {
+        const colors = [
+            "#FFB6C1", "#FFA07A", "#F0E68C", 
+            "#90EE90", "#87CEEB", "#DDA0DD",
+            "#FFC0CB", "#FFD700", "#FFE4E1"
+        ];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+</script>
+
+</body>
+
+</html>
